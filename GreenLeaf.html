@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GreenLeaf Houseplants</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .bg {
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .landing {
+            background: rgba(255,255,255,0.85);
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+        }
+        .company-name {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #388e3c;
+            margin-bottom: 20px;
+        }
+        .company-desc {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .btn {
+            background: #388e3c;
+            color: #fff;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1.1em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+        }
+        .hidden { display: none; }
+        /* Header */
+        .header {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .nav-links a {
+            margin: 0 12px;
+            text-decoration: none;
+            color: #388e3c;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .cart-icon {
+            position: relative;
+            font-size: 1.7em;
+            cursor: pointer;
+        }
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -14px;
+            background: #388e3c;
+            color: #fff;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        /* Product Listing */
+        .products-container {
+            max-width: 900px;
+            margin: 32px auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: center;
+        }
+        .category-group {
+            flex: 1 1 250px;
+            min-width: 250px;
+            background: #f7f7f7;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+        .category-title {
+            font-size: 1.3em;
+            color: #388e3c;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 14px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .product-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        .product-info {
+            flex: 1;
+        }
+        .product-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+        .product-price {
+            color: #388e3c;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+        /* Cart Page */
+        .cart-page {
+            max-width: 700px;
+            margin: 32px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 32px;
+        }
+        .cart-title {
+            font-size: 2em;
+            color: #388e3c;
+            margin-bottom: 18px;
+            font-weight: bold;
+        }
+        .cart-summary {
+            font-size: 1.1em;
+            margin-bottom: 18px;
+            color: #333;
+        }
+        .cart-items {
+            margin-bottom: 24px;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid #eee;
+            padding: 12px 0;
+        }
+        .cart-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        .cart-info {
+            flex: 1;
+        }
+        .cart-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .cart-unit-price {
+            color: #388e3c;
+            font-size: 0.98em;
+            margin-top: 2px;
+        }
+        .cart-qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cart-btn {
+            background: #388e3c;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+        .cart-btn:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+        }
+        .delete-btn {
+            background: #e53935;
+            margin-left: 10px;
+        }
+        .cart-actions {
+            display: flex;
+            gap: 18px;
+            margin-top: 24px;
+        }
+        @media (max-width: 700px) {
+            .cart-page, .products-container { padding: 10px; }
+            .category-group { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing" class="bg">
+        <div class="landing">
+            <div class="company-name">GreenLeaf Houseplants</div>
+            <div class="company-desc">
+                Welcome to GreenLeaf Houseplants! We bring nature indoors with a curated selection of beautiful, easy-to-care-for houseplants. Perfect for homes, offices, and gifts. Start your green journey today!
+            </div>
+            <button class="btn" onclick="showPage('products')">Get Started</button>
+        </div>
+    </div>
+
+    <!-- Header (shared) -->
+    <div id="header" class="header hidden">
+        <div class="nav-links">
+            <a href="#" onclick="showPage('products')">Products</a>
+            <a href="#" onclick="showPage('cart')">Cart</a>
+        </div>
+        <div class="cart-icon" onclick="showPage('cart')">
+            🛒 <span id="cartCount" class="cart-count">0</span>
+        </div>
+    </div>
+
+    <!-- Product Listing Page -->
+    <div id="productsPage" class="hidden">
+        <div class="products-container">
+            <!-- Categories and products will be injected here -->
+        </div>
+    </div>
+
+    <!-- Shopping Cart Page -->
+    <div id="cartPage" class="cart-page hidden">
+        <div class="cart-title">Your Shopping Cart</div>
+        <div class="cart-summary">
+            <span id="cartTotalItems">Total items: 0</span> |
+            <span id="cartTotalCost">Total cost: $0.00</span>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-actions">
+            <button class="btn" onclick="checkout()">Checkout</button>
+            <button class="btn" onclick="showPage('products')">Continue Shopping</button>
+        </div>
+        <div id="checkoutMsg" style="margin-top:18px;color:#388e3c;font-weight:bold;"></div>
+    </div>
+
+    <script>
+        // Plant data
+        const plants = [
+            {
+                id: 1,
+                name: "Snake Plant",
+                price: 18.99,
+                category: "Low Light",
+                thumb: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=80&q=80"
+            },
+            {
+                id: 2,
+                name: "Monstera Deliciosa",
+                price: 29.99,
+                category: "Statement",
+                thumb: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=80&q=80"
+            },
+            {
+                id: 3,
+                name: "Pothos",
+                price: 14.99,
+                category: "Easy Care",
+                thumb: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=80&q=80"
+            },
+            {
+                id: 4,
+                name: "ZZ Plant",
+                price: 22.99,
+                category: "Low Light",
+                thumb: "https://images.unsplash.com/photo-1524594154908-edd0acfa6e4c?auto=format&fit=crop&w=80&q=80"
+            },
+            {
+                id: 5,
+                name: "Peace Lily",
+                price: 19.99,
+                category: "Flowering",
+                thumb: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=80&q=80"
+            },
+            {
+                id: 6,
+                name: "Fiddle Leaf Fig",
+                price: 34.99,
+                category: "Statement",
+                thumb: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=80&q=80"
+            }
+        ];
+
+        // Cart state
+        let cart = {};
+
+        // Utility functions
+        function showPage(page) {
+            document.getElementById('landing').classList.add('hidden');
+            document.getElementById('productsPage').classList.add('hidden');
+            document.getElementById('cartPage').classList.add('hidden');
+            document.getElementById('header').classList.remove('hidden');
+            if (page === 'products') {
+                document.getElementById('productsPage').classList.remove('hidden');
+                renderProducts();
+            } else if (page === 'cart') {
+                document.getElementById('cartPage').classList.remove('hidden');
+                renderCart();
+            } else {
+                document.getElementById('header').classList.add('hidden');
+                document.getElementById('landing').classList.remove('hidden');
+            }
+        }
+
+        // Render products grouped by category
+        function renderProducts() {
+            const container = document.querySelector('.products-container');
+            container.innerHTML = '';
+            const categories = [...new Set(plants.map(p => p.category))];
+            categories.forEach(cat => {
+                const group = document.createElement('div');
+                group.className = 'category-group';
+                group.innerHTML = `<div class="category-title">${cat}</div>`;
+                plants.filter(p => p.category === cat).forEach(plant => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.innerHTML = `
+                        <img src="${plant.thumb}" alt="${plant.name}" class="product-thumb">
+                        <div class="product-info">
+                            <div class="product-name">${plant.name}</div>
+                            <div class="product-price">$${plant.price.toFixed(2)}</div>
+                        </div>
+                        <button class="btn" id="addBtn${plant.id}" onclick="addToCart(${plant.id})"
+                            ${cart[plant.id] ? 'disabled' : ''}>${cart[plant.id] ? 'Added' : 'Add to Cart'}</button>
+                    `;
+                    group.appendChild(card);
+                });
+                container.appendChild(group);
+            });
+            updateCartCount();
+        }
+
+        // Add to cart logic
+        function addToCart(id) {
+            if (!cart[id]) {
+                cart[id] = 1;
+                document.getElementById(`addBtn${id}`).disabled = true;
+                document.getElementById(`addBtn${id}`).innerText = 'Added';
+                updateCartCount();
+            }
+        }
+
+        // Update cart icon count
+        function updateCartCount() {
+            const count = Object.values(cart).reduce((a, b) => a + b, 0);
+            document.getElementById('cartCount').innerText = count;
+        }
+
+        // Render cart page
+        function renderCart() {
+            const cartItemsDiv = document.getElementById('cartItems');
+            cartItemsDiv.innerHTML = '';
+            let totalItems = 0, totalCost = 0;
+            Object.keys(cart).forEach(id => {
+                const plant = plants.find(p => p.id == id);
+                const qty = cart[id];
+                totalItems += qty;
+                totalCost += qty * plant.price;
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <img src="${plant.thumb}" alt="${plant.name}" class="cart-thumb">
+                    <div class="cart-info">
+                        <div class="cart-name">${plant.name}</div>
+                        <div class="cart-unit-price">$${plant.price.toFixed(2)}</div>
+                    </div>
+                    <div class="cart-qty-controls">
+                        <button class="cart-btn" onclick="changeQty(${plant.id}, -1)" ${qty === 1 ? 'disabled' : ''}>-</button>
+                        <span>${qty}</span>
+                        <button class="cart-btn" onclick="changeQty(${plant.id}, 1)">+</button>
+                    </div>
+                    <button class="cart-btn delete-btn" onclick="deleteItem(${plant.id})">Delete</button>
+                `;
+                cartItemsDiv.appendChild(itemDiv);
+            });
+            document.getElementById('cartTotalItems').innerText = `Total items: ${totalItems}`;
+            document.getElementById('cartTotalCost').innerText = `Total cost: $${totalCost.toFixed(2)}`;
+            updateCartCount();
+            document.getElementById('checkoutMsg').innerText = '';
+        }
+
+        // Change quantity in cart
+        function changeQty(id, delta) {
+            if (cart[id]) {
+                cart[id] += delta;
+                if (cart[id] < 1) cart[id] = 1;
+                renderCart();
+            }
+        }
+
+        // Delete item from cart
+        function deleteItem(id) {
+            delete cart[id];
+            renderCart();
+        }
+
+        // Checkout button
+        function checkout() {
+            document.getElementById('checkoutMsg').innerText = 'Coming Soon!';
+        }
+
+        // Initial page
+        showPage();
+
+    </script>
+</body>
+</html></div>
